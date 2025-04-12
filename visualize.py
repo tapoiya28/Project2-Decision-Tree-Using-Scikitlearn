@@ -94,3 +94,46 @@ def plot_original_distribution(target, title="Original Dataset"):
     plt.grid(True, linestyle="--", alpha=0.5) # Same
     plt.show()
 
+def analyze_accuracy_vs_depth(dataset, feature_names, class_names, max_depth_values=[None, 2, 3, 4, 5, 6, 7]):
+    
+    
+    
+    #2.4 The depth and accuracy of a decision tree
+
+    
+    import pandas as pd
+    from sklearn.tree import DecisionTreeClassifier
+    from sklearn.metrics import accuracy_score
+    # Take the data 80/20
+    X_train, X_test, y_train, y_test = dataset
+    # Save the result
+    results = []
+
+    # For each depth [None, 2, 3, 4, 5, 6, 7]
+    for depth in max_depth_values:
+        
+        # Set up for the decision tree but we add one more variable max_depth
+        # Re-trained with limited depth requirement
+        clf = DecisionTreeClassifier(criterion='entropy', max_depth=depth, random_state=42)
+        clf.fit(X_train, y_train)
+        y_pred = clf.predict(X_test)
+        
+        # Calculate by take the right predicts divide to total predicts
+        acc = accuracy_score(y_test, y_pred)
+        
+        # Save the current depth
+        results.append(("None" if depth is None else depth, acc))
+        # Convert to string
+        dot_data = export_graphviz(
+            clf, out_file=None,
+            feature_names=feature_names,
+            class_names=class_names,
+            filled=True, rounded=True, special_characters=True
+        )
+        # Create graph based on string
+        graph = graphviz.Source(dot_data)
+        print(f"🌲 Decision Tree with max_depth = {depth}, Accuracy = {acc:.4f}")
+        display(graph)
+
+    # For report the accuracy_score (on the test set) of the decision tree classifier for each value of the max_depth parameter.
+    return pd.DataFrame(results, columns=["max_depth", "accuracy"]) 
