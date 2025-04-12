@@ -3,24 +3,39 @@ import matplotlib.pyplot as plt
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+
+# Initialize LabelEncoder
+label_encoder = LabelEncoder()
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+
+# Initialize LabelEncoder
+label_encoder = LabelEncoder()
 
 def prepare_splits(feature, target, splits=[(0.4, 0.6), (0.6, 0.4), (0.8, 0.2), (0.9, 0.1)]):
-    # This function is used for 2.1 Preparing the datasets (You should read 2.1 to understand easily)
-    # Argument:
-        # feature: feature subset
-        # + target: label subset
-        # + splits: the proportions
-    # Save data sets
+    """
+    Prepares the data by encoding categorical features and splitting into train/test sets.
+    
+    Arguments:
+    - feature: Feature set (DataFrame)
+    - target: Target labels (Series or array)
+    - splits: Proportions for train/test split (default: 40/60, 60/40, 80/20, 90/10)
+    
+    Returns:
+    - datasets: List of tuples containing the training and testing data (features and labels)
+    """
+    
+    # Encode categorical features
+    for column in feature.select_dtypes(include=['object']).columns:  # Identify categorical columns
+        feature[column] = label_encoder.fit_transform(feature[column])  # Apply LabelEncoder to each column
+
+    # Initialize list to hold datasets for each split
     datasets = []
 
-    # Take the proportions in "splits" for test and training sets required
+    # Split the data based on the proportions defined in 'splits'
     for train_size, test_size in splits:
-        
-        # feature_train: feature train
-        # label_train: label train
-        # feature_test: feature test
-        # label_test: label test
-        
         feature_train, feature_test, label_train, label_test = train_test_split(
             feature, target,
             train_size=train_size, 
@@ -29,18 +44,8 @@ def prepare_splits(feature, target, splits=[(0.4, 0.6), (0.6, 0.4), (0.8, 0.2), 
             shuffle=True, 
             random_state=42
         )
-        
-        # shuffle = true: shuffle the data
-        # train_size and test_size: it is wut it is
-        # stratify = true: make sure that the data will be splitted equally:
-            # - Example: 70 for class 1 and 30 for class 2, we take the proportion 80/20. 
-            # - Then it could be 70 class 1 + 10 class 2 for training (80) and 20 class 2 remaining for test *20)
-            # -> Data for test only class 2 remains. 
-        # random-state = 42: like seed in minecraft: 
-            # - It stands for the initialization. If we set it to 42, it will be same the initialization. 
-            # -> Random but same result bc same seed.
-            
         datasets.append((feature_train, feature_test, label_train, label_test))
+
     return datasets
 
 def train_model(feature_train, label_train):
@@ -54,6 +59,7 @@ def train_model(feature_train, label_train):
     clf = DecisionTreeClassifier(criterion='entropy', random_state=42)
     # Method training
         # -> It will be trained based on those informations
+    
     clf.fit(feature_train, label_train)
     return clf
 
@@ -62,6 +68,7 @@ def train_all_models(datasets):
         # + datasets: Data after splitting
     # Save trained model of decision trees
     clfs = []
+    
     for (feature_train, _, label_train, _) in datasets:
         # call to train_model function to get decision tree
         clf = train_model(feature_train, label_train)

@@ -87,7 +87,7 @@ def plot_class_distributions(datasets, splits, title):
 def plot_original_distribution(target, title="Original Dataset"):
     # Draw the chart of the original data 
      
-    sns.countplot(x=target)   # x_axis count quantity of classes of target column (0, 1) 
+    sns.countplot(x=target,)   # x_axis count quantity of classes of target column (0, 1) 
     plt.title(title) # set title
     plt.xlabel("Label") # set x axis title
     plt.ylabel("Count") # set y axis title
