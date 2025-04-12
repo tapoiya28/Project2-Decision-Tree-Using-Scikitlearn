@@ -37,7 +37,8 @@ def prepare_splits(feature, target, splits=[(0.4, 0.6), (0.6, 0.4), (0.8, 0.2), 
     # Split the data based on the proportions defined in 'splits'
     for train_size, test_size in splits:
         feature_train, feature_test, label_train, label_test = train_test_split(
-            feature, target,
+            feature, 
+            target,
             train_size=train_size, 
             test_size=test_size,
             stratify=target, 
@@ -58,7 +59,7 @@ def train_model(feature_train, label_train):
             # + random_state=42: Ensures the same training results every time we run it again 
     clf = DecisionTreeClassifier(criterion='entropy', random_state=42)
     # Method training
-        # -> It will be trained based on those informations
+    # -> It will be trained based on those informations
     
     clf.fit(feature_train, label_train)
     return clf
