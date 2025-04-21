@@ -19,10 +19,13 @@ def visualize_tree(clf, feature_names, class_names):
             # + rounded=True: rounded shapes
             # + special_characters: allow using the special_characters in labels or features
     dot_data = export_graphviz(
-        clf, out_file=None,
+        clf,
+        out_file=None,
         feature_names=feature_names,
         class_names=class_names,
-        filled=True, rounded=True, special_characters=True
+        filled=True, 
+        rounded=True, 
+        special_characters=True
     )
     # Initialize the graph by the above description string
     graph = graphviz.Source(dot_data)
