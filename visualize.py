@@ -137,3 +137,27 @@ def analyze_accuracy_vs_depth(dataset, feature_names, class_names, max_depth_val
 
     # For report the accuracy_score (on the test set) of the decision tree classifier for each value of the max_depth parameter.
     return pd.DataFrame(results, columns=["max_depth", "accuracy"]) 
+
+
+
+def plot_accuracy_vs_depth(results, title="Accuracy vs. Tree Depth"):
+  
+    
+    
+    df = results.copy() 
+    # 
+    df["numeric_depth"] = df["max_depth"].apply(lambda d: 10 if d=="None" or d is None else d)
+    
+   
+    plt.figure()
+    plt.plot(df["numeric_depth"], df["accuracy"], marker='o')
+
+    xticks = df["numeric_depth"].tolist()
+    xlabels = df["max_depth"].tolist()
+    plt.xticks(xticks, xlabels)
+    
+    plt.xlabel("max_depth")
+    plt.ylabel("Accuracy")
+    plt.title(title)
+    plt.grid(True)
+    plt.show()
